@@ -1,28 +1,65 @@
 <div class="title-page">
-    <div class="logo"><%= image_tag( record.resolved_repository['image_url'] || asset_path("archivesspace.small.png") ) %></div>
+    <div class="logo"><%= image_tag( record.resolved_repository['image_url'] || asset_path("archivesspace.small.png"), {:class => 'logo-img'} ) %></div>
     <div class="title-block">
-    <% if record.finding_aid['title'] %>
+
+      <% if record.finding_aid['title'] %>
         <h3 class="title"><%== process_mixed_content(record.finding_aid['title'], :preserve_newlines => true) %></h3>
-        <h4 class="subtitle"><%== if record.finding_aid['subtitle'] then process_mixed_content(record.finding_aid['subtitle'], :preserve_newlines => true) end %></h4>
-    <% else %>
+        <h4 class="subtitle italic"><%== if record.finding_aid['subtitle'] then process_mixed_content(record.finding_aid['subtitle'], :preserve_newlines => true) end %></h4>
+      <% else %>
         <h3 class="title"><%== process_mixed_content(record.display_string, :preserve_newlines => true) %></h3>
-    <% end %>
+      <% end %>
+
+      <% unless record.dates.empty? %>
+        <h4 class="dates"><%= record.dates.map{|d| d['final_expression']}.join('; ') %></h4>
+      <% end %>
+
+      <h4 class="identifier"><%= record.level.capitalize %> <%= record.identifier.split('.').last %></h4>
+
     </div>
 
-    <p><%= I18n.t('pdf_reports.finding_aid_date_prefix') %> <%= Date.today %></p>
-    <% if record.finding_aid['language'] %>
-        <p><%= I18n.t('pdf_reports.finding_aid_written_in') %> <%= t('enumerations.language_iso639_2.' + record.finding_aid['language']) %></p>
-    <% end %>
 
-    <% if record.finding_aid['description_rules'] %>
-        <p><%= I18n.t('enumerations.resource_finding_aid_description_rules.' + record.finding_aid['description_rules'], :default => record.finding_aid['description_rules']) %></p>
-    <% end %>
+  <div class="summary-section">
+    <h4 class="summary-title">Descriptive Summary</h4>
 
-    <p><%= record.finding_aid['edition_statement'] %></p>
+    <table class="summary-table">
+      <tr>
+        <td class="suumary-item-label">Creator<%= record.raw['creators_text'].length > 1 ? 's' : '' %>:</td>
+        <td class="summary-item-value"><%= record.raw['creators_text'].join('; ') %></td>
+      </tr>
+      <tr>
+        <td class="suumary-item-label">Title:</td>
+        <td class="summary-item-value">
+          <%= process_mixed_content(record.finding_aid['title']) %>
+          <% if record.finding_aid['subtitle'] %>
+            <span class="italic"><%= process_mixed_content(record.finding_aid['subtitle']) %></span>
+          <% end %>
+        </td>
+      </tr>
+      <tr>
+        <td class="suumary-item-label">Dates:</td>
+        <td class="summary-item-value"><%= record.dates.map{|d| d['final_expression']}.join('; ') %></td>
+      </tr>
+      <tr>
+        <td class="suumary-item-label">Abstract:</td>
+        <td class="summary-item-value"><%= process_mixed_content(record.json['notes'].select{|n| n['type'] == 'abstract'}.map{|n| n['content'].join('; ')}.join('; ')) %></td>
+      </tr>
+      <tr>
+        <td class="suumary-item-label">Identification:</td>
+        <td class="summary-item-value"><%= record.level.capitalize %> <%= record.identifier.split('.').last %></td>
+      </tr>
+      <tr>
+        <td class="suumary-item-label">Extent:</td>
+        <td class="summary-item-value"><%= record.extents.map{|e| e['display'].strip}.join(', ') %></td>
+      </tr>
+      <tr>
+        <td class="suumary-item-label">Language:</td>
+        <td class="summary-item-value"><%= record.lang_materials.map{|l| t('enumerations.language_iso639_2.' + l['language'])}.join(', ') %></td>
+      </tr>
+      <tr>
+        <td class="suumary-item-label">Repository:</td>
+        <td class="summary-item-value"><%= record.resolved_repository['name'] %>, Texas State University</td>
+      </tr>
+    </table>
 
-    <%= render(:partial => 'publication_statement', :locals => {
-        :repository_name => record.resolved_repository['name'],
-        :repository_information => record.repository_information
-    })
-    %>
+  </div>
 </div>
