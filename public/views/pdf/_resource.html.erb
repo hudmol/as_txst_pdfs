@@ -1,55 +1,22 @@
-<a id="summary-information"></a>
-<h3><%= I18n.t('pdf_reports.summary_information') %></h3>
 
-<dl>
-    <dt><%= I18n.t('repository._singular') %></dt>
-    <dd><%= record.resolved_repository['name'] %></dd>
+<% major_notes = ['bioghist', 'scopecontent'] %>
 
-    <% if record.agents %>
-        <% record.agents.each do |role, relationships| %>
-            <% relationships.each do |relationship| %>
-                <dt><%= I18n.t("enumerations.linked_agent_role.#{role}", :default => role) %></dt>
-                <dd><%= relationship['_resolved']['title'] %></dd>
-            <% end %>
+<% major_notes.each do |major_note_type| %>
+  <% if major_note = record.notes[major_note_type] %>
+    <div class="major-note">
+      <a id="<%= major_note_type %>"></a>
+
+      <% major_note.each do |note| %>
+        <h3 class="note-header"><%= note['label'] || I18n.t("enumerations._note_types.#{major_note_type}") %></h3>
+
+        <% note['note_text'].split(/<br *\/?>/).each do |para| %>
+          <p class="note-content"><%= process_mixed_content(para) %></p>
         <% end %>
-    <% end %>
+      <% end %>
+    </div>
+  <% end %>
+<% end %>
 
-    <dt><%= I18n.t('resource._public.finding_aid.title') %></dt><dd><%== process_mixed_content(record.display_string) %></dd>
-
-    <dt><%= I18n.t('resource._public.identifier') %></dt><dd><%= record.identifier %></dd>
-
-    <% record.dates.each do |date| %>
-        <dt><%= I18n.t('resource._public.finding_aid.date') %></dt><dd><%= date['final_expression'] %></dd>
-    <% end %>
-
-    <% record.extents.each do |extent| %>
-        <dt><%= I18n.t('resource._public.physdesc') %></dt><dd><%= extent['display'] %></dd>
-    <% end %>
-
-    <% unless record.notes.include?('langmaterial') || record.lang_materials.blank? %>
-        <dt><%= t('resource._public.lang') %></dt>
-        <% record.lang_materials.each do |lang_material| %>
-            <dd><%= t('enumerations.language_iso639_2.' + lang_material['language'])%></dd>
-        <% end %>
-    <% end %>
-
-    <% record.notes.each do |note_type, note| %>
-        <% if note_type == 'physdesc' %>
-            <a id="note-<%= note_type %>"></a>
-            <% note.each do |n| %>
-              <dt><%= I18n.t("enumerations._note_types.#{note_type}") %></dt><dd><%== process_mixed_content(n['note_text']) %></dd>
-            <% end %>
-        <% end %>
-    <% end %>
-
-    <% if record.container_display && !record.container_display.empty? %>
-        <dt><%= I18n.t('resource._public.storage') %></dt><dd><%= record.container_display.join(', ') %></dd>
-    <% end %>
-
-    <%= render(:partial => 'digital_object_links', :locals => {
-        :instances => record.instances
-    }) %>
-</dl>
 
 <% record.notes.each do |note_type, note| %>
     <% next if ['physdesc'].include?(note_type) %>
