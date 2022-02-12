@@ -1,39 +1,42 @@
+<% major_notes = ['bioghist', 'scopecontent'] %>
+
 <div class="toc-page">
-    <h3><%= I18n.t('pdf_reports.table_of_contents') %></h3>
+  <h3><%= I18n.t('pdf_reports.table_of_contents') %></h3>
 
-    <ul class="toc">
-        <li class="level-1"><a href="#summary-information"><%= I18n.t('pdf_reports.summary_information') %></a></li>
+  <ul class="toc">
 
-        <% resource.notes.each do |note_type, note| %>
-            <% next unless ['physdesc'].include?(note_type) %>
-            <li class="level-1"><a href="#administrative-information"><%= I18n.t("enumerations._note_types.#{note_type}") %></a></li>
-        <% end %>
+    <% major_notes.each do |major_note_type| %>
+      <% if note = resource.notes[major_note_type].first %>
+        <li class="level-1"><a href="#<%= major_note_type %>">
+          <span class="top-toc-entry"><%= note['label'] || I18n.t("enumerations._note_types.#{major_note_type}") %></span>
+        </a></li>
+      <% end %>
+    <% end %>
 
-        <% resource.notes.each do |note_type, note| %>
-            <% next if ['physdesc'].include?(note_type) %>
-            <li class="level-1">
-                <a href="#note-<%= note_type %>">
-                  <% labels = [] %>
-                  <% note.each do |n| %>
-                    <% if n['label'] %>
-                        <% labels << n['label'] %>
-                    <% else %>
-                        <% labels <<  I18n.t("enumerations._note_types.#{note_type}") %>
-                    <% end %>
-                  <% end %>
-                  <%== process_mixed_content(labels.uniq.join(", ")) %>
-                </a>
-            </li>
-        <% end %>
+    <li class="level-1"><a href="#administrative-information">
+      <span class="top-toc-entry"><%= I18n.t('pdf_reports.administrative_information') %></span>
+    </a></li>
 
-        <li class="level-1"><a href="#administrative-information"><%= I18n.t('pdf_reports.administrative_information') %></a></li>
+    <% resource.notes.each do |note_type, note| %>
+      <% next if major_notes.include?(note_type) %>
+      <% next if ['physdesc', 'abstract', 'langmaterial'].include?(note_type) %>
 
-        <% if has_children %>
-            <li class="level-1"><a href="#collection-inventory"><%= I18n.t('pdf_reports.collection_inventory') %></a></li>
-        <% end %>
+      <li class="level-2"><a href="#note-<%= note_type %>"><%= note.first['label'] ? note.first['label'] : I18n.t('enumerations._note_types.#{note_type}') %></a></li>
+    <% end %>
 
-        <% ordered_aos.each do |entry| %>
-            <li class="level-<%= entry.depth + 1 %>"><a href="#<%= entry.uri %>"><%== process_mixed_content(entry.display_string) %></a></li>
-        <% end %>
-    </ul>
+    <li class="level-2"><a href="#subjects"><%= I18n.t('pdf_reports.controlled_access_headings') %></a></li>
+
+    <% if has_children %>
+      <li class="level-1"><a href="#collection-inventory">
+        <span class="top-toc-entry">Detailed Description of the Collection</span>
+      </a></li>
+
+      <% ordered_aos.each do |entry| %>
+        <li class="level-<%= entry.depth + 1 %>"><a href="#<%= entry.uri %>">
+          <%== process_mixed_content(entry.display_string) %>
+        </a></li>
+      <% end %>
+    <% end %>
+
+  </ul>
 </div>

@@ -54,6 +54,7 @@ class FindingAidPDF
     out_html.write(renderer.render_to_string partial: 'titlepage', layout: false, :locals => {:record => @resource})
 
     # Drop the resource and filter the AOs
+    series_count = 0;
     toc_aos = @ordered_records.entries.drop(1).select {|entry|
       if entry.depth == 1
         DEPTH_1_LEVELS.include?(entry.level)
@@ -62,6 +63,12 @@ class FindingAidPDF
       else
         false
       end
+    }.map {|entry|
+      if entry.level == 'series'
+        series_count += 1
+        entry.display_string = 'Series ' + romanize(series_count) + ': ' +  entry.display_string
+      end
+      entry
     }
 
     out_html.write(renderer.render_to_string partial: 'toc', layout: false, :locals => {:resource => @resource, :has_children => has_children, :ordered_aos => toc_aos})
@@ -134,7 +141,7 @@ class FindingAidPDF
 
   def generate
     out_html = source_file
-puts "PPPPPPPPPPP   #{out_html.path}"
+
     XMLCleaner.new.clean(out_html.path)
 
     pdf_file = Tempfile.new
