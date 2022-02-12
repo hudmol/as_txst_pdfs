@@ -7,7 +7,7 @@
       <a id="<%= major_note_type %>"></a>
 
       <% major_note.each do |note| %>
-        <h3 class="note-header"><%= note['label'] || I18n.t("enumerations._note_types.#{major_note_type}") %></h3>
+        <h3 class="main-section-header"><%= note['label'] || I18n.t("enumerations._note_types.#{major_note_type}") %></h3>
 
         <% note['note_text'].split(/<br *\/?>/).each do |para| %>
           <p class="note-content"><%= process_mixed_content(para) %></p>
@@ -20,7 +20,7 @@
 
 <div class="main-section">
   <a id="administrative-information"></a>
-  <h3 class="note-header"><%= I18n.t('pdf_reports.administrative_information') %></h3>
+  <h3 class="main-section-header"><%= I18n.t('pdf_reports.administrative_information') %></h3>
 
   <% record.notes.each do |note_type, note| %>
     <% next if major_notes.include?(note_type) %>
@@ -47,8 +47,15 @@
   </ul>
 </div>
 
-<div class="collection-inventory">
+<div class="collection-inventory main-section">
 <% if has_children %>
     <a id="collection-inventory"></a>
-    <h3><%= I18n.t('pdf_reports.collection_inventory') %></h3>
+    <h3 class="main-section-header">Detailed Description of the Collection</h3>
+
+    <table class="inventory-table">
+      <tr>
+        <th class="indicator-column"></th>
+        <th class="indicator-column"></th>
+        <th></th>
+      </tr>
 <% end %>
