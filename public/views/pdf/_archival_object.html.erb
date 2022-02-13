@@ -29,9 +29,13 @@
         <td class="<%= new_box ? 'new-box' : '' %>"><%== instance['sub_container']['indicator_2'] %></td>
       <% else %>
         <td class="<%= new_box ? 'new-box' : '' %>" colspan="2">
-          <%== I18n.t("enumerations.instance_instance_type." + instance['sub_container']['top_container']['_resolved']['type'],
-                      :default => instance['sub_container']['top_container']['_resolved']['type'].capitalize) %>
-          <%== instance['sub_container']['top_container']['_resolved']['indicator'] %>
+          <% if instance['sub_container']['top_container']['_resolved']['type'] == 'box' %>
+            <%== instance['sub_container']['top_container']['_resolved']['indicator'] %>
+          <% else %>
+            <%== I18n.t("enumerations.instance_instance_type." + instance['sub_container']['top_container']['_resolved']['type'],
+                        :default => instance['sub_container']['top_container']['_resolved']['type'].capitalize) %>
+            <%== instance['sub_container']['top_container']['_resolved']['indicator'] %>
+          <% end %>
         </td>
       <% end %>
 
