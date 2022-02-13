@@ -1,3 +1,28 @@
+
+# patch XMLCleaner to handle pagination descriptions in McCarthy like this:
+#   237&238;
+
+class XMLCleaner
+  # method indentical to public/app/lib/xml_cleaner.rb except where marked JJJ
+  def replace_html_entities(file_path)
+    File.open(file_path + ".tmp", "w") do |outfile|
+      File.open(file_path) do |infile|
+        infile.each_with_index do |line, index|
+          line = HTMLEntities.new.decode(line)
+          # decode turns &amp; into & so need to undo that here for PDF to work
+          # JJJ                                        vvv - added 0-9
+          if line.match(/&\s+/) || line.match(/&[A-Za-z0-9]+[^;]/)
+            line.gsub!('&', '&amp;')
+          end
+          outfile.puts(line)
+        end
+      end
+    end
+    File.rename(file_path + ".tmp", file_path)
+  end
+end
+
+
 # Overrides public/app/models/finding_aid_pdf.rb
 # Name change required to get it to load
 
