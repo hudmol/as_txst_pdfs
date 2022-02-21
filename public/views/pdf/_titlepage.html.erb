@@ -15,7 +15,7 @@
         <h4 class="dates"><%= record.dates.map{|d| d['final_expression']}.join('; ') %></h4>
       <% end %>
 
-      <h4 class="identifier"><%= record.level.capitalize %> <%= record.identifier.split('.').last %></h4>
+      <h4 class="identifier"><%= record.level.capitalize %> <%= record.identifier %></h4>
 
     </div>
 
@@ -47,7 +47,7 @@
       </tr>
       <tr>
         <td class="summary-item-label">Identification:</td>
-        <td class="summary-item-value"><%= record.level.capitalize %> <%= record.identifier.split('.').last %></td>
+        <td class="summary-item-value"><%= record.identifier %></td>
       </tr>
       <tr>
         <td class="summary-item-label">Extent:</td>
