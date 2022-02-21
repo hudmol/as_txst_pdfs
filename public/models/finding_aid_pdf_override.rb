@@ -147,7 +147,7 @@ class FindingAidPDF
       end
     end
 
-    out_html.write(renderer.render_to_string partial: 'footer', layout: false, :locals => {:record => @resource})
+    out_html.write(renderer.render_to_string partial: 'footer', layout: false, :locals => {:record => @resource, :has_children => has_children})
     out_html.close
 
     out_html
@@ -168,7 +168,8 @@ class FindingAidPDF
 
   def generate
     out_html = source_file
-
+puts "PPPPPPPPPP   #{out_html.path}"
+`cp #{out_html.path} /Users/james/play/mootml`
     XMLCleaner.new.clean(out_html.path)
 
     pdf_file = Tempfile.new
