@@ -102,6 +102,7 @@ class FindingAidPDF
 
     page_size = 50
     depth_counts = {}
+    series_count = 0
     found_instance = false
     last_indicator = false
 
@@ -133,12 +134,13 @@ class FindingAidPDF
 
         depth_counts[entry.depth] ||= 0
         depth_counts[entry.depth] += 1
+        series_count += 1 if record.level == 'series'
         out_html.write(renderer.render_to_string partial: 'archival_object', layout: false,
                        :locals => {
                          :record => record,
                          :level => entry.depth,
                          :position => depth_counts[entry.depth],
-                         :roman_position => romanize(depth_counts[entry.depth]),
+                         :roman_position => romanize(series_count),
                          :first_instance => first_instance,
                          :new_box => new_box,
                        })
