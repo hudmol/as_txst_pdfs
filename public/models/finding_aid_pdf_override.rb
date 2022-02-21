@@ -168,8 +168,7 @@ class FindingAidPDF
 
   def generate
     out_html = source_file
-puts "PPPPPPPPPP   #{out_html.path}"
-`cp #{out_html.path} /Users/james/play/mootml`
+
     XMLCleaner.new.clean(out_html.path)
 
     pdf_file = Tempfile.new
