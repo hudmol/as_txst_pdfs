@@ -1,12 +1,14 @@
+
+<% title = process_mixed_content(record.finding_aid['title'] || record.display_string, :preserve_newlines => true) %>
+<% subtitle = process_mixed_content(record.finding_aid['subtitle'], :preserve_newlines => true) %>
+
 <div class="title-page">
     <div class="logo"><%= image_tag( record.resolved_repository['image_url'] || asset_path("archivesspace.small.png"), {:class => 'logo-img'} ) %></div>
     <div class="title-block">
 
-      <% if record.finding_aid['title'] %>
-        <h3 class="title"><%== process_mixed_content(record.finding_aid['title'], :preserve_newlines => true) %></h3>
-        <h4 class="subtitle italic"><%== if record.finding_aid['subtitle'] then process_mixed_content(record.finding_aid['subtitle'], :preserve_newlines => true) end %></h4>
-      <% else %>
-        <h3 class="title"><%== process_mixed_content(record.display_string, :preserve_newlines => true) %></h3>
+      <h3 class="title"><%== title %></h3>
+      <% if subtitle %>
+        <h4 class="subtitle italic"><%== subtitle %></h4>
       <% end %>
 
       <% unless record.dates.empty? %>
@@ -29,9 +31,9 @@
       <tr>
         <td class="summary-item-label">Title:</td>
         <td class="summary-item-value">
-          <%= process_mixed_content(record.finding_aid['title']) %>
-          <% if record.finding_aid['subtitle'] %>
-            <span class="italic"><%= process_mixed_content(record.finding_aid['subtitle']) %></span>
+          <%= title %>
+          <% if subtitle %>
+            <span class="italic"><%== subtitle %></span>
           <% end %>
         </td>
       </tr>
