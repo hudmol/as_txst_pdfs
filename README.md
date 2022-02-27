@@ -4,7 +4,7 @@ An ArchivesSpace plugin that customizes PDF downloads in the public user
 interface, accessed via the `Print` button on collection pages.
 
 The design was based on PDF finding aids developed for TXST's previous
-system. There are examples [here](tree/main/examples).
+system. There are examples [here](examples).
 
 ----
 Developed by Hudson Molonglo for Texas State University.
@@ -33,7 +33,7 @@ migrations and no external gems.
 
 To confirm installation has been successful, navigate to a collection page in
 the public user interface and click on the `Print` button at top right. The
-generated PDF should look like the [examples](tree/main/examples) provided.
+generated PDF should look like the [examples](examples) provided.
 
 
 ## Configuration
@@ -59,7 +59,7 @@ This plugin overrides some of the ERB templates in `public/app/views/pdf`.
 It also overrides methods in two `public/app/models` classes.
 
 You can further customize this plugin's behavior by inspecting the files in
-[public](tree/main/public) and modifying them.
+[public](public) and modifying them.
 
 When upgrading ArchivesSpace, it is good practice to check the overriden files
 in ArchivesSpace core to see if there are changes relevant to this plugin and
