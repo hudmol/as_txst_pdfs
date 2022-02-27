@@ -47,7 +47,7 @@ used when generating the PDF:
   - Parent Institution Name
   - Branding Image URL (ref to a banner image for the title page)
 
-Editing repository records does not result in a reindex of the reocrds in the
+Editing repository records does not result in a reindex of the records in the
 repository. So if you change any of these values you will likely need to kick
 off a manual reindex of the affected repository to see the changes reflected in
 the PDFs.
@@ -61,7 +61,7 @@ It also overrides methods in two `public/app/models` classes.
 You can further customize this plugin's behavior by inspecting the files in
 [public](public) and modifying them.
 
-When upgrading ArchivesSpace, it is good practice to check the overriden files
+When upgrading ArchivesSpace, it is good practice to check the overridden files
 in ArchivesSpace core to see if there are changes relevant to this plugin and
 port them if necessary.
 
