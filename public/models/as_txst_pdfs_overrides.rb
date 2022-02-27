@@ -23,44 +23,9 @@ class XMLCleaner
 end
 
 
-# Overrides public/app/models/finding_aid_pdf.rb
-# Name change required to get it to load
-
-require 'tempfile'
+# Overrides methods in public/app/models/finding_aid_pdf.rb
 
 class FindingAidPDF
-
-  DEPTH_1_LEVELS = ['collection', 'recordgrp', 'series']
-  DEPTH_2_LEVELS = ['subgrp', 'subseries', 'subfonds']
-
-  attr_reader :repo_id, :resource_id, :archivesspace, :base_url, :repo_code
-
-  def initialize(repo_id, resource_id, archivesspace_client, base_url)
-    @repo_id = repo_id
-    @resource_id = resource_id
-    @archivesspace = archivesspace_client
-    @base_url = base_url
-
-    @resource = archivesspace.get_record("/repositories/#{repo_id}/resources/#{resource_id}")
-    @ordered_records = archivesspace.get_record("/repositories/#{repo_id}/resources/#{resource_id}/ordered_records")
-
-    # make sure finding aid title isn't only like /^\n$/
-    if @resource.finding_aid['title'] and @resource.finding_aid['title'] =~ /\w/
-      @short_title = @resource.finding_aid['title'].lstrip.split("\n")[0].strip
-    end
-  end
-
-  def suggested_filename
-    # Use the EAD ID.  If that's missing, use the 4-part identifier
-    filename = (@resource.ead_id || @resource.four_part_identifier.reject(&:blank?).join('_'))
-
-    # no spaces, please.
-    filename.gsub(' ', '_') + '.pdf'
-  end
-
-  def short_title
-    @short_title || suggested_filename
-  end
 
   def source_file
     # We'll use the original controller so we can find and render the PDF
@@ -154,6 +119,8 @@ class FindingAidPDF
   end
 
   def romanize(n)
+    # sigh
+
     @romans ||= { 1000 => "M", 900 => "CM", 500 => "D", 400 => "CD", 100 => "C", 90 => "XC",
                   50 => "L", 40 => "XL", 10 => "X", 9 => "IX", 5 => "V", 4 => "IV", 1 => "I" }
 
@@ -164,30 +131,5 @@ class FindingAidPDF
     end
 
     roman
-  end
-
-  def generate
-    out_html = source_file
-
-    XMLCleaner.new.clean(out_html.path)
-
-    pdf_file = Tempfile.new
-    pdf_file.close
-
-    renderer = org.xhtmlrenderer.pdf.ITextRenderer.new
-    renderer.set_document(java.io.File.new(out_html.path))
-
-    # FIXME: We'll need to test this with a reverse proxy in front of it.
-    renderer.shared_context.base_url = base_url
-
-    renderer.layout
-
-    pdf_output_stream = java.io.FileOutputStream.new(pdf_file.path)
-    renderer.create_pdf(pdf_output_stream)
-    pdf_output_stream.close
-
-    out_html.unlink
-
-    pdf_file
   end
 end
