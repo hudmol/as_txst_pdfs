@@ -26,7 +26,7 @@ been tested against other versions, it will probably work as expected on all
 This plugin has no special installation requirements. It has no database
 migrations and no external gems.
 
-1.  Download the latest [release](releases).
+1.  Download the latest [release](../../releases).
 2.  Unpack it into `/path/to/your/archivesspace/plugins/`
 3.  Add the plugin to your `config.rb` like this: `AppConfig[:plugins] << 'as_txst_pdfs'`
 4.  Restart ArchivesSpace
