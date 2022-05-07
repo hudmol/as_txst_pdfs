@@ -6,7 +6,7 @@
   <ul class="toc">
 
     <% major_notes.each do |major_note_type| %>
-      <% if note = resource.notes[major_note_type].first %>
+      <% if note = resource.notes[major_note_type] && resource.notes[major_note_type].first %>
         <li class="level-1"><a href="#<%= major_note_type %>">
           <span class="top-toc-entry"><%= note['label'] || I18n.t("enumerations._note_types.#{major_note_type}") %></span>
         </a></li>
