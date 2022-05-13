@@ -24,6 +24,7 @@
   <% end %>
 
   <tr>
+    <% if instance['sub_container'] %>
       <% if instance['sub_container']['indicator_2'] %>
         <td class="<%= new_box ? 'new-box' : '' %>"><%== instance['sub_container']['top_container']['_resolved']['indicator'] %></td>
         <td class="<%= new_box ? 'new-box' : '' %>"><%== instance['sub_container']['indicator_2'] %></td>
@@ -38,20 +39,30 @@
           <% end %>
         </td>
       <% end %>
+    <% else %>
+      <td class="<%= new_box ? 'new-box' : '' %>" colspan="2">
+        [ Digital Item ]
+      </td>
+    <% end %>
 
-      <td class="<%= new_box ? 'new-box' : '' %>">
+    <td class="<%= new_box ? 'new-box' : '' %>">
+
+      <% if uri = instance['digital_object'] && (instance['digital_object']['_resolved']['file_versions'].first || {}).fetch('file_uri', false) %>
+        <a href="<%= uri %>"><%== process_mixed_content(record.display_string) %></a>
+      <% else %>
         <%== process_mixed_content(record.display_string) %>
+      <% end %>
 
-        <% record.notes.each do |note_type, note| %>
-          <% if ['physdesc', 'scopecontent'].include?(note_type) %>
-            <% note.each do |n| %>
-              <% if !n['is_inherited'] %>
-                <br />
-                <%== process_mixed_content(n['note_text']) %>
-              <% end %>
+      <% record.notes.each do |note_type, note| %>
+        <% if ['physdesc', 'scopecontent'].include?(note_type) %>
+          <% note.each do |n| %>
+            <% if !n['is_inherited'] %>
+              <br />
+              <%== process_mixed_content(n['note_text']) %>
             <% end %>
           <% end %>
         <% end %>
-      </td>
+      <% end %>
+    </td>
   </tr>
 <% end %>

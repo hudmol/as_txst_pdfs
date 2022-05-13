@@ -85,15 +85,21 @@ class FindingAidPDF
         new_box = false
 
         if !Array(record.instances).empty?
-          if !found_instance
-            first_instance = true
-            found_instance = true
-          else
+          first_container = Array(record.instances).select{|i| i.has_key?('sub_container')}.first
+          if found_instance
             first_instance = false
+          else
+            if first_container
+              first_instance = true
+              found_instance = true
+            end
           end
-          if last_indicator != Array(record.instances).first['sub_container']['top_container']['_resolved']['indicator']
-            last_indicator = Array(record.instances).first['sub_container']['top_container']['_resolved']['indicator']
-            new_box = true
+
+          if first_container
+            if last_indicator != first_container['sub_container']['top_container']['_resolved']['indicator']
+              last_indicator = first_container['sub_container']['top_container']['_resolved']['indicator']
+              new_box = true
+            end
           end
         end
 
