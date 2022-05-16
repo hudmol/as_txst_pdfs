@@ -15,7 +15,7 @@
         <h4 class="dates"><%= record.dates.map{|d| d['final_expression']}.join('; ') %></h4>
       <% end %>
 
-      <h4 class="identifier"><%= record.level.capitalize %> <%= record.identifier %></h4>
+      <h4 class="identifier"><%= I18n.t('enumerations.archival_record_level.' + record.level, record.level.capitalize) %> <%= record.identifier %></h4>
 
     </div>
 
@@ -24,10 +24,12 @@
     <h4 class="summary-title">Descriptive Summary</h4>
 
     <table class="summary-table">
-      <tr>
-        <td class="summary-item-label">Creator<%= record.raw['creators_text'].length > 1 ? 's' : '' %>:</td>
-        <td class="summary-item-value"><%= record.raw['creators_text'].join('; ') %></td>
-      </tr>
+      <% if record.raw['creators_text'] %>
+        <tr>
+          <td class="summary-item-label">Creator<%= record.raw['creators_text'].length > 1 ? 's' : '' %>:</td>
+          <td class="summary-item-value"><%= record.raw['creators_text'].join('; ') %></td>
+        </tr>
+      <% end %>
       <tr>
         <td class="summary-item-label">Title:</td>
         <td class="summary-item-value">
@@ -41,10 +43,15 @@
         <td class="summary-item-label">Dates:</td>
         <td class="summary-item-value"><%= record.dates.map{|d| d['final_expression']}.join('; ') %></td>
       </tr>
-      <tr>
-        <td class="summary-item-label">Abstract:</td>
-        <td class="summary-item-value"><%= process_mixed_content(record.json['notes'].select{|n| n['type'] == 'abstract'}.map{|n| n['content'].join('; ')}.join('; ')) %></td>
-      </tr>
+
+      <% abstract = process_mixed_content(record.json['notes'].select{|n| n['type'] == 'abstract'}.map{|n| n['content'].join('; ')}.join('; ')) %>
+      <% unless abstract.strip.empty? %>
+        <tr>
+          <td class="summary-item-label">Abstract:</td>
+          <td class="summary-item-value"><%= abstract %></td>
+        </tr>
+      <% end %>
+
       <tr>
         <td class="summary-item-label">Identification:</td>
         <td class="summary-item-value"><%= record.identifier %></td>
