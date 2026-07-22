@@ -23,19 +23,24 @@
     </tr>
   <% end %>
 
+  <% is_container = instance['sub_container'].present? %>
   <tr>
-    <% if instance['sub_container'] %>
-      <% if instance['sub_container']['indicator_2'] %>
-        <td class="<%= new_box ? 'new-box' : '' %>"><%== instance['sub_container']['top_container']['_resolved']['indicator'] %></td>
-        <td class="<%= new_box ? 'new-box' : '' %>"><%== instance['sub_container']['indicator_2'] %></td>
+    <% if is_container %>
+      <% top_container = instance['sub_container']['top_container']&.dig('_resolved') %>
+      <% indicator_2 = instance['sub_container']['indicator_2'] %>
+
+      <% if indicator_2.present? %>
+        <td class="<%= new_box ? 'new-box' : '' %>"><%== top_container&.dig('indicator') %></td>
+        <td class="<%= new_box ? 'new-box' : '' %>"><%== indicator_2 %></td>
       <% else %>
         <td class="<%= new_box ? 'new-box' : '' %>" colspan="2">
-          <% if instance['sub_container']['top_container']['_resolved']['type'] == 'box' %>
-            <%== instance['sub_container']['top_container']['_resolved']['indicator'] %>
+          <% if top_container&.dig('type') == 'box' %>
+            <%== top_container&.dig('indicator') %>
           <% else %>
-            <%== I18n.t("enumerations.instance_instance_type." + instance['sub_container']['top_container']['_resolved']['type'],
-                        :default => instance['sub_container']['top_container']['_resolved']['type'].capitalize) %>
-            <%== instance['sub_container']['top_container']['_resolved']['indicator'] %>
+            <% type_value = top_container&.dig('type') %>
+            <% type_text = type_value ? I18n.t("enumerations.instance_instance_type.#{type_value}", default: type_value.capitalize) : '' %>
+            <%= type_text %>
+            <%== top_container&.dig('indicator') %>
           <% end %>
         </td>
       <% end %>
@@ -46,22 +51,60 @@
     <% end %>
 
     <td class="<%= new_box ? 'new-box' : '' %>">
+      <% file_versions = instance['digital_object']&.dig('_resolved', 'file_versions') %>
+      <% file_uri = file_versions&.first&.fetch('file_uri', nil) %>
 
-      <% if uri = instance['digital_object'] && (instance['digital_object']['_resolved']['file_versions'].first || {}).fetch('file_uri', false) %>
-        <a href="<%= uri %>"><%== process_mixed_content(record.display_string) %></a>
+      <% if file_uri %>
+        <a href="<%= file_uri %>"><%== process_mixed_content(record.display_string) %></a>
       <% else %>
         <%== process_mixed_content(record.display_string) %>
       <% end %>
 
-      <% record.notes.each do |note_type, note| %>
+      <% record.notes.each do |note_type, note_arr| %>
         <% if ['physdesc', 'scopecontent'].include?(note_type) %>
-          <% note.each do |n| %>
-            <% if !n['is_inherited'] %>
+          <% note_arr.each do |n| %>
+            <% unless n['is_inherited'] %>
               <br />
               <%== process_mixed_content(n['note_text']) %>
             <% end %>
           <% end %>
         <% end %>
+      <% end %>
+
+      <% unless is_container %>
+        <dl class="additional-metadata">
+          <% record.extents.each do |extent| %>
+            <% next if extent['_inherited'] %>
+            <dt><%= I18n.t('resource._public.physdesc') %></dt>
+            <dd><%= extent['display'] %></dd>
+          <% end %>
+
+          <% if !record.notes.key?('langmaterial') && record.lang_materials.present? %>
+            <% record.lang_materials.each do |lang_material| %>
+              <% next if lang_material['_inherited'] %>
+              <dt><%= I18n.t('resource._public.lang') %></dt>
+              <dd><%= t("enumerations.language_iso639_2.#{lang_material['language']}") %></dd>
+            <% end %>
+          <% end %>
+
+          <%= render partial: 'digital_object_links', locals: { instances: record.instances } %>
+
+          <% subjects = Array(record.subjects).reject { |s| s['is_inherited'] } %>
+          <% if subjects.any? %>
+            <dt><%= I18n.t('pdf_reports.controlled_access_headings') %></dt>
+            <dd>
+              <ul>
+                <% subjects.each do |subject| %>
+                  <li><%= subject['title'] %></li>
+                <% end %>
+              </ul>
+            </dd>
+          <% end %>
+
+          <% ASUtils.find_local_directories('public/views/_pdf_archival_object.html.erb').each do |template| %>
+            <%= render template: ViewHelper.relative_plugin_view_path(template), locals: { record: record } if File.exist?(template) %>
+          <% end %>
+        </dl>
       <% end %>
     </td>
   </tr>
