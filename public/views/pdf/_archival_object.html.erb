@@ -1,5 +1,5 @@
 <a name="<%= record.uri %>"></a>
-<% if ['collection', 'series', 'subseries'].include?(record.level) %>
+<% if ['collection', 'series', 'subseries'].include?(record.level) || record.level.downcase.include?('series') %>
   <tr>
     <% if record.level == 'series' %>
       <td colspan="3">
@@ -9,6 +9,11 @@
       <td></td>
       <td colspan="2">
         <div class="subseries-entry"><%== process_mixed_content(record.display_string) %></div>
+      </td>
+    <% else %>
+      <td></td><td></td>
+      <td>
+        <div class="subseries-entry"><%== process_mixed_content(record.display_string) %> [<%= record.level %>]</div>
       </td>
     <% end %>
   </tr>
