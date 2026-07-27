@@ -9,7 +9,7 @@
       <% major_note.each do |note| %>
         <h3 class="main-section-header"><%= note['label'] || I18n.t("enumerations._note_types.#{major_note_type}") %></h3>
 
-        <% Array(note['note_text']).each do |text| %>
+        <% note['note_text'].split(/<br *\/?>/).each do |text| %>
           <p class="note-content"> <%== process_mixed_content(text) %></p>
         <% end %>
       <% end %>
