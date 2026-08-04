@@ -4,8 +4,8 @@
       <% file_versions = instance['digital_object']['_resolved']['file_versions'] %>
       <% Array(file_versions).each do |file| %>
           <% if file['publish'] && file['file_uri'] && file['xlink_show_attribute'] != 'embed' %>
-              <dt><%= I18n.t('resource._public.digital_object') %></dt>
-              <dd><%= link_to(file['file_uri'], file['file_uri']) %></dd>
+              <dt>Digitized Content</dt>
+              <dd><%= file['file_uri'] %></dd>
           <% end %>
       <% end %>
     <% end %>
