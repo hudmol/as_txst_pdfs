@@ -24,7 +24,9 @@
       <li class="level-2"><a href="#note-<%= note_type %>"><%= note.first['label'] ? note.first['label'] : I18n.t('enumerations._note_types.#{note_type}') %></a></li>
     <% end %>
 
-    <li class="level-2"><a href="#subjects"><%= I18n.t('pdf_reports.controlled_access_headings') %></a></li>
+    <% unless resource.subjects.empty? %>
+      <li class="level-2"><a href="#subjects"><%= I18n.t('pdf_reports.controlled_access_headings') %></a></li>
+    <% end %>
 
     <% if has_children %>
       <li class="level-1"><a href="#collection-inventory">

@@ -39,13 +39,15 @@
     <% end %>
   <% end %>
 
-  <h3><%= I18n.t('pdf_reports.controlled_access_headings') %></h3>
-  <a id="subjects"></a>
-  <ul>
-    <% Array(record.subjects).each do |subject| %>
-      <li><%= subject['title'] %></li>
-    <% end %>
-  </ul>
+  <% unless record.subjects.empty? %>
+    <h3><%= I18n.t('pdf_reports.controlled_access_headings') %></h3>
+    <a id="subjects"></a>
+    <ul>
+      <% Array(record.subjects).each do |subject| %>
+        <li><%= subject['title'] %></li>
+      <% end %>
+    </ul>
+  <% end %>
 </div>
 
 <% if has_children %>
