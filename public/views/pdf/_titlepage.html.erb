@@ -81,6 +81,18 @@
         <td class="summary-item-label">Repository:</td>
         <td class="summary-item-value"><%= record.resolved_repository['name'] %>, <%= record.resolved_repository['parent_institution_name'] %></td>
       </tr>
+      <% if record.json['finding_aid_date'] %>
+        <tr>
+          <td class="summary-item-label">Finding Aid Date:</td>
+          <td class="summary-item-value"><%= record.json['finding_aid_date'] %></td>
+        </tr>
+      <% end %>
+      <% if record.json['finding_aid_author'] %>
+        <tr>
+          <td class="summary-item-label">Finding Aid Author:</td>
+          <td class="summary-item-value"><%= record.json['finding_aid_author'] %></td>
+        </tr>
+      <% end %>
     </table>
 
   </div>
