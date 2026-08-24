@@ -6,19 +6,21 @@ interface, accessed via the `Print` button on collection pages.
 The design was based on PDF finding aids developed for TXST's previous
 system. There are examples [here](examples).
 
+This version of the plugin is based on a version developed at Texas State.
+
+
 ----
 Developed by Hudson Molonglo for Texas State University.
 
-&copy; 2022 Hudson Molonglo Pty Ltd.
+&copy; 2026 Hudson Molonglo Pty Ltd.
 
 ----
 
 
 ## Compatibility
 
-This plugin was developed against ArchivesSpace v3.0.1. Although it has not
-been tested against other versions, it will probably work as expected on all
-2.x and 3.x versions.
+This version of the plugin was developed against ArchivesSpace v4.1.0. For
+compatibility with earlier versions of ArchivesSpace, see version v1.3.
 
 
 ## Installation
